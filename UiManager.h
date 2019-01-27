@@ -7,9 +7,7 @@
 #include <ESP8266WebServer.h>
 #include <WiFiManager.h>          // https://github.com/tzapu/WiFiManager
 #include <ArduinoJson.h>          // https://github.com/bblanchon/ArduinoJson (ver: 5.x)
-
-#define WIFI_AP_NAME "MoodLamp"
-#define WIFI_AP_PASS "123456789"
+#include "Config.h"
 
 
 class UiManager {

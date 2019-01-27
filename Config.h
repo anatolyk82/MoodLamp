@@ -1,9 +1,29 @@
 #ifndef ESP_LIGHT_CONFIG_H
 #define ESP_LIGHT_CONFIG_H
 
-#define FIRMWARE_VERSION "0.1.0"
+#define FIRMWARE_VERSION "0.1.1"
 
 #define INTERVAL_PUBLISH_STATE 600000 // Interval to send statistics to the mqtt broker
+
+/* MQTT Settings */
+#define MQTT_TOPIC_STATE "light/moodlamp"
+#define MQTT_TOPIC_SET "light/moodlamp/set"
+
+#define MQTT_TOPIC_STATUS "light/moodlamp/status"
+#define MQTT_STATUS_PAYLOAD_ON "online"
+#define MQTT_STATUS_PAYLOAD_OFF "offline"
+
+#define MQTT_KEEP_ALIVE_SECONDS 30
+
+
+/* WiFi Manager settings */
+#define WIFI_AP_NAME "MoodLamp"
+#define WIFI_AP_PASS "123456789"
+
+
+/* Device settings */
+#define DATA_PIN    D1
+#define NUM_LEDS    9
 
 struct DeviceState {
   bool state = false;

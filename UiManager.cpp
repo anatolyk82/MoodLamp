@@ -1,4 +1,3 @@
-
 #include "UiManager.h"
 
 UiManager::UiManager() :

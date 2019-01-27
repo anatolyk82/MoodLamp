@@ -7,14 +7,7 @@
 
 #include <functional>
 
-#define MQTT_TOPIC_STATE "light/moodlamp"
-#define MQTT_TOPIC_SET "light/moodlamp/set"
-
-#define MQTT_TOPIC_STATUS "light/moodlamp/status"
-#define MQTT_STATUS_PAYLOAD_ON "online"
-#define MQTT_STATUS_PAYLOAD_OFF "offline"
-
-#define MQTT_KEEP_ALIVE_SECONDS 30
+#include "Config.h"
 
 
 /*

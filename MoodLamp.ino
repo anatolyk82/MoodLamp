@@ -18,7 +18,7 @@ DeviceState deviceState;
 /* Device control object */
 DeviceControl device;
 
-/* timer to publish the current state */
+/* Timer to publish the current state */
 SimpleTimer timer;
 
 void publishDeviceStateTimer() {
@@ -33,13 +33,6 @@ void setup() {
 
   //clean FS, for testing
   //SPIFFS.format();
-
-  /* Initial state of the lamp */
-  /*deviceState.state = 0;
-  deviceState.red = 255;
-  deviceState.green = 255;
-  deviceState.blue = 255;
-  deviceState.brightness = 128;*/
 
   /* Create UI and connect to WiFi */
   uiManager.initUIManager(false);

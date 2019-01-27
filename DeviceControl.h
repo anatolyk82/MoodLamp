@@ -2,9 +2,8 @@
 #define ESP_LIGHT_DEVICE_CONTROL_H
 
 #include <FastLED.h>
+#include "Config.h"
 
-#define DATA_PIN    D1
-#define NUM_LEDS    9
 #define LED_TYPE    WS2812
 #define COLOR_ORDER GRB
 

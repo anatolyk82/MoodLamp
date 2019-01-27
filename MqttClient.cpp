@@ -1,6 +1,4 @@
-
 #include "MqttClient.h"
-#include "Config.h"
 
 DeviceMqttClient::DeviceMqttClient() : AsyncMqttClient()
   , m_updateDeviceState(nullptr)
