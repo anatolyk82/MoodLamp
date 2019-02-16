@@ -51,7 +51,9 @@ void LightControlButton::run()
   if ( ((millis() - m_eventPressAndHoldStart) > PRESS_AND_HOLD_DELAY) && (!m_ready) && (m_eventPressAndHoldStart > 0) ) {
     Serial.printf("LightControlButton: Press And Hold event\n");
     m_eventPressAndHoldStart = millis();
-    this->onPressAndHold();
+    if (m_onPressAndHoldEvent) {
+      this->m_onPressAndHoldEvent();
+    }
   }
 
   /* A click is done */
@@ -62,42 +64,13 @@ void LightControlButton::run()
     Serial.printf("LightControlButton: Click duration: %d; Event count: %d\n", m_eventLength, m_eventCount);
 
     if (m_eventCount == 1) {
-      if (m_eventLength > 150) {
-        this->onClicked();
+      if ((m_eventLength > 150) && m_onClickEvent) {
+        this->m_onClickEvent();
       }
-    } else if (m_eventCount == 2) {
-      this->onDoubleClicked();
-    } else if (m_eventCount == 3) {
-      this->onTripleClicked();
+    } else if ((m_eventCount == 2) && m_onDoubleEvent) {
+      this->m_onDoubleEvent();
+    } else if ((m_eventCount == 3) && m_onTripleEvent) {
+      this->m_onTripleEvent();
     }
   }
-}
-
-
-
-void LightControlButton::onClicked()
-{
-  if (m_deviceState) {
-    m_deviceState->state = !m_deviceState->state;
-
-    /* Update actual state of the device*/
-    if (m_updateDeviceState) {
-      m_updateDeviceState();
-    }
-  }
-}
-
-void LightControlButton::onDoubleClicked()
-{
-  // Double click: change effect
-}
-
-void LightControlButton::onTripleClicked()
-{
-  // Triple click: change color
-}
-
-void LightControlButton::onPressAndHold()
-{
-  //TODO: Change brightness
 }

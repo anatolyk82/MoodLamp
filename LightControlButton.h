@@ -15,21 +15,18 @@ public:
   LightControlButton();
   ~LightControlButton();
 
-  /*
-   * Set a reference to the device state structure.
-   * This must be called in setup() before sending/receiving any data.
-   */
-  void setDeviceStateReference(struct DeviceState *deviceState) {
-    m_deviceState = deviceState;
+  /* Callback setters */
+  void onClicked(std::function<void(void)> onClickEvent) {
+    m_onClickEvent = onClickEvent;
   }
-
-
-  /*
-   * The function sets a callback function which will be called
-   * whenever the button is pressed.
-   */
-  void onDeviceStateUpdate(std::function<void(void)> updateDeviceState) {
-    m_updateDeviceState = updateDeviceState;
+  void onDoubleClicked(std::function<void(void)> onDoubleEvent) {
+    m_onDoubleEvent = onDoubleEvent;
+  }
+  void onTripleClicked(std::function<void(void)> onTripleEvent) {
+    m_onTripleEvent = onTripleEvent;
+  }
+  void onPressAndHold(std::function<void(void)> onPressAndHoldEvent) {
+    m_onPressAndHoldEvent = onPressAndHoldEvent;
   }
 
   /* 
@@ -45,11 +42,11 @@ public:
   void run();
 
 private:
-  void onClicked();
-  void onDoubleClicked();
-  void onTripleClicked();
-  void onPressAndHold();
-
+  std::function<void(void)> m_onClickEvent = nullptr;
+  std::function<void(void)> m_onDoubleEvent = nullptr;
+  std::function<void(void)> m_onTripleEvent = nullptr;
+  std::function<void(void)> m_onPressAndHoldEvent = nullptr;
+  
   const uint8_t m_defaultButtonStatus = 0;
   uint8_t m_buttonStatus;
   uint8_t m_pin;
@@ -61,9 +58,6 @@ private:
   bool m_ready = false;
 
   unsigned long m_eventPressAndHoldStart = 0;
-  
-  std::function<void(void)> m_updateDeviceState;
-  struct DeviceState *m_deviceState;
-};
+  };
 
 #endif

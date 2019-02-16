@@ -187,3 +187,23 @@ void DeviceMqttClient::publishDeviceState() {
 
   publish(MQTT_TOPIC_STATE, 0, true, buffer);
 }
+
+
+void DeviceMqttClient::sendSwitchStateCommand()
+{
+  const int BUFFER_SIZE = JSON_OBJECT_SIZE(20);
+  StaticJsonBuffer<BUFFER_SIZE> jsonBuffer;
+
+  JsonObject& root = jsonBuffer.createObject();
+
+  if (m_deviceState) {
+    root["state"] = m_deviceState->state ? "OFF" : "ON"; // switch state
+
+    char buffer[root.measureLength() + 1];
+    root.printTo(buffer, sizeof(buffer));
+
+    Serial.printf("\nMQTT: Publish command: %s\n", buffer);
+
+    publish(MQTT_TOPIC_SET, 0, true, buffer);
+  }
+}

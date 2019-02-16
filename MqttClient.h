@@ -51,9 +51,11 @@ public:
    * whenever the mqtt client receives an mqtt command message 
    * to change the current device state.
    */
-  void onDeviceStateUpdate(std::function<void(void)> updateDeviceState) {
+  void onMessageReveived(std::function<void(void)> updateDeviceState) {
     m_updateDeviceState = updateDeviceState;
   }
+
+  void sendSwitchStateCommand();
 
 private:
   void onMqttConnect(bool sessionPresent);

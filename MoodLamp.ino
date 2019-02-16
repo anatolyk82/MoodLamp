@@ -55,7 +55,7 @@ void setup() {
   }
 
   /* Set a callback to update the actual state of the device when an mqtt command is received */
-  mqttClient.onDeviceStateUpdate( std::bind(&DeviceControl::updateDeviceState, &device) );
+  mqttClient.onMessageReveived( std::bind(&DeviceControl::updateDeviceState, &device) );
 
   /* Connect the MQTT client to the broker */
   int8_t attemptToConnectToMQTT = 0;
@@ -75,8 +75,9 @@ void setup() {
 
   /* Initialize the button */
   button.init(BUTTON_PIN);
-  button.setDeviceStateReference( &deviceState );
-  button.onDeviceStateUpdate( std::bind(&DeviceControl::updateDeviceState, &device) ); //TODO: publishDeciceState() instead
+  button.onClicked( std::bind(&DeviceMqttClient::sendSwitchStateCommand, &mqttClient) );
+  //button.setDeviceStateReference( &deviceState );
+  //button.onDeviceStateUpdate( std::bind(&DeviceControl::updateDeviceState, &device) ); //TODO: publishDeciceState() instead
 
 
   /* If there is still no connection here, restart the device */  
