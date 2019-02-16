@@ -107,7 +107,17 @@ void DeviceMqttClient::onMqttMessage(char* topic, char* payload, AsyncMqttClient
       } else {
         m_deviceState->transition = 0;
       }
-        
+
+      /* Parameters of various effects */
+      if (json.containsKey("effect_fire_cooling")) {
+        m_deviceState->effect_fire_cooling = json["effect_fire_cooling"];
+      }
+
+      if (json.containsKey("effect_fire_sparking")) {
+        m_deviceState->effect_fire_sparking = json["effect_fire_sparking"];
+      }
+
+      /* Update actual state of the device*/
       if (m_updateDeviceState) {
         m_updateDeviceState();
       }

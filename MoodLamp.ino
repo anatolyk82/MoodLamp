@@ -1,10 +1,11 @@
-
+  
 #include <SimpleTimer.h>          // https://github.com/schinken/SimpleTimer
 
 #include "Config.h"
 #include "UiManager.h"
 #include "MqttClient.h"
 #include "DeviceControl.h"
+#include "LightControlButton.h"
 
 /* Create a UI manager */
 UiManager uiManager;
@@ -20,6 +21,9 @@ DeviceControl device;
 
 /* Timer to publish the current state */
 SimpleTimer timer;
+
+/* Light control button */
+LightControlButton button;
 
 void publishDeviceStateTimer() {
   mqttClient.publishDeviceState();
@@ -69,6 +73,12 @@ void setup() {
     attemptToConnectToMQTT += 1;
   }
 
+  /* Initialize the button */
+  button.init(BUTTON_PIN);
+  button.setDeviceStateReference( &deviceState );
+  button.onDeviceStateUpdate( std::bind(&DeviceControl::updateDeviceState, &device) ); //TODO: publishDeciceState() instead
+
+
   /* If there is still no connection here, restart the device */  
   if (!WiFi.isConnected()) {
     Serial.println("setup(): WiFi is not connected. Reset the device to initiate connection again.");
@@ -92,6 +102,7 @@ void setup() {
 void loop() {
   timer.run();
   device.run();
+  button.run();
 
   if (WiFi.status() != WL_CONNECTED) {
     Serial.println("loop(): WiFi is not connected. Reset the device to initiate connection again.");
