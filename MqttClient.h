@@ -56,6 +56,7 @@ public:
   }
 
   void sendSwitchStateCommand();
+  void sendChangeBrightnessCommand();
 
 private:
   void onMqttConnect(bool sessionPresent);

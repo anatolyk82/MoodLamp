@@ -35,6 +35,7 @@ void LightControlButton::run()
       } else { // pressed
         m_eventStart = millis();
         m_eventPressAndHoldStart = m_eventStart;
+        m_pressAndHoldEventDetected = false;
         m_eventLength = 0;
         if (m_resetCount) {
           m_eventCount = 1;
@@ -47,17 +48,18 @@ void LightControlButton::run()
     }
   }
 
-  /* Detect the press-and-hold event */
+  /* Detect a press-and-hold event */
   if ( ((millis() - m_eventPressAndHoldStart) > PRESS_AND_HOLD_DELAY) && (!m_ready) && (m_eventPressAndHoldStart > 0) ) {
     Serial.printf("LightControlButton: Press And Hold event\n");
     m_eventPressAndHoldStart = millis();
     if (m_onPressAndHoldEvent) {
       this->m_onPressAndHoldEvent();
     }
+    m_pressAndHoldEventDetected = true; // It prevents the release event after press-and-hold
   }
 
   /* A click is done */
-  if (m_ready && ((millis() - m_eventStart) > REPEAT_DELAY)) {
+  if (m_ready && ((millis() - m_eventStart) > REPEAT_DELAY) && (!m_pressAndHoldEventDetected)) {
     m_ready = false;
     m_resetCount = true;
 

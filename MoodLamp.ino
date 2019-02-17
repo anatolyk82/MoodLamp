@@ -91,6 +91,7 @@ void setup() {
   /* Initialize the button */
   button.init(BUTTON_PIN);
   button.onClicked( std::bind(&DeviceMqttClient::sendSwitchStateCommand, &mqttClient) );
+  button.onPressAndHold( std::bind(&DeviceMqttClient::sendChangeBrightnessCommand, &mqttClient) );
 
   /* Publish device state periodicly */
   timer.setInterval(INTERVAL_PUBLISH_STATE, publishDeviceStateTimer);

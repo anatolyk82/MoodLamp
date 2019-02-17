@@ -193,7 +193,6 @@ void DeviceMqttClient::sendSwitchStateCommand()
 {
   const int BUFFER_SIZE = JSON_OBJECT_SIZE(20);
   StaticJsonBuffer<BUFFER_SIZE> jsonBuffer;
-
   JsonObject& root = jsonBuffer.createObject();
 
   if (m_deviceState) {
@@ -205,5 +204,31 @@ void DeviceMqttClient::sendSwitchStateCommand()
     Serial.printf("\nMQTT: Publish command: %s\n", buffer);
 
     publish(MQTT_TOPIC_SET, 0, false, buffer);
+  }
+}
+
+void DeviceMqttClient::sendChangeBrightnessCommand()
+{
+  if (m_deviceState) {
+    if (m_deviceState->state) {
+      const int BUFFER_SIZE = JSON_OBJECT_SIZE(20);
+      StaticJsonBuffer<BUFFER_SIZE> jsonBuffer;
+      JsonObject& root = jsonBuffer.createObject();
+
+      root["state"] = "ON";
+      
+      uint8_t b = m_deviceState->brightness;
+      if (b <= 255) {
+        b = (b + 15) % 255;
+      }
+      root["brightness"] = b;
+
+      char buffer[root.measureLength() + 1];
+      root.printTo(buffer, sizeof(buffer));
+
+      Serial.printf("\nMQTT: Publish command: %s\n", buffer);
+
+      publish(MQTT_TOPIC_SET, 0, false, buffer);
+    }
   }
 }

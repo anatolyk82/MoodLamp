@@ -3,7 +3,7 @@
 
 #define DEBOUNCE_DELAY          50
 #define REPEAT_DELAY            500
-#define PRESS_AND_HOLD_DELAY    1000
+#define PRESS_AND_HOLD_DELAY    1500
 
 #include <functional>
 #include <Arduino.h>
@@ -58,6 +58,8 @@ private:
   bool m_ready = false;
 
   unsigned long m_eventPressAndHoldStart = 0;
-  };
+  bool m_pressAndHoldEventDetected = false;
+  
+};
 
 #endif
