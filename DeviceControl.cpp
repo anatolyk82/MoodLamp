@@ -92,6 +92,26 @@ void DeviceControl::run()
 
 
 void DeviceControl::nextEffect() {
+  std::map< std::string, std::function<void(void)> >::iterator it;
+
+  Serial.printf("NextEffect: Last active effect: %s\n", m_lastActiveEffect.c_str());
+  if (m_lastActiveEffect != "") {
+    /* Find the last avtive effect */
+    for ( it = m_lightEffectsList.begin(); it != m_lightEffectsList.end(); it++ ) {
+      if (it->first == m_lastActiveEffect) {
+        if ((++it) != m_lightEffectsList.end()) {
+          m_deviceState->effect = it->first;
+        } else {
+          m_deviceState->effect = m_lightEffectsList.begin()->first;
+        }
+        break;
+      }
+    }
+  } else {
+    m_deviceState->effect = m_lightEffectsList.begin()->first;
+  }
+  m_lastActiveEffect = m_deviceState->effect;
+  Serial.printf("NextEffect: Apply effect: %s\n", m_deviceState->effect.c_str());
 }
 
 /* --------------------------------------------------------------- */

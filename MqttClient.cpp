@@ -232,3 +232,24 @@ void DeviceMqttClient::sendChangeBrightnessCommand()
     }
   }
 }
+
+void DeviceMqttClient::sendSwitchEffectCommand()
+{
+  if (m_deviceState) {
+    if (m_deviceState->state) {
+      const int BUFFER_SIZE = JSON_OBJECT_SIZE(20);
+      StaticJsonBuffer<BUFFER_SIZE> jsonBuffer;
+      JsonObject& root = jsonBuffer.createObject();
+
+      root["state"] = "ON";
+      root["effect"] = "NextEffect";
+
+      char buffer[root.measureLength() + 1];
+      root.printTo(buffer, sizeof(buffer));
+
+      Serial.printf("\nMQTT: Publish command: %s\n", buffer);
+
+      publish(MQTT_TOPIC_SET, 0, false, buffer);
+    }
+  }
+}

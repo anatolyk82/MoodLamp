@@ -57,6 +57,7 @@ public:
 
   void sendSwitchStateCommand();
   void sendChangeBrightnessCommand();
+  void sendSwitchEffectCommand();
 
 private:
   void onMqttConnect(bool sessionPresent);

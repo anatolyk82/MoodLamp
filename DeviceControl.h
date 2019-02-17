@@ -76,7 +76,6 @@ private:
   
   CRGB leds[NUM_LEDS];
   struct DeviceState *m_deviceState;
-  //std::string m_currentEffect;
 
   /* Effects */
   uint8_t ef_hue = 0;
@@ -92,7 +91,9 @@ private:
     {"Chaos",          std::bind(&DeviceControl::efChaos, this)},
     {"RandomPixels",   std::bind(&DeviceControl::efRandomPixels, this)},
     {"Fire",           std::bind(&DeviceControl::efFire, this)},
+    {"NextEffect",     std::bind(&DeviceControl::nextEffect, this)}
   };
+  std::string m_lastActiveEffect;
 };
 
 #endif //ESP_LIGHT_DEVICE_CONTROL_H
