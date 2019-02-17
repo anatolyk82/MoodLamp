@@ -8,15 +8,6 @@
 #define LED_TYPE    WS2812
 #define COLOR_ORDER GRB
 
-#define EFFECT_SPARKLES "Sparkles"
-#define EFFECT_RAINBOW "Rainbow"
-#define EFFECT_POLICE "Police"
-#define EFFECT_COLORLOOP "Colorloop"
-#define EFFECT_CHAOS "Chaos"
-#define EFFECT_RANDOMPIXELS "RandomPixels"
-#define EFFECT_FIRE "Fire"
-#define EFFECT_STOP "Stop"
-
 struct ChaosEffectHelper {
   uint8_t hue;
   uint8_t saturation;
@@ -85,7 +76,7 @@ private:
   
   CRGB leds[NUM_LEDS];
   struct DeviceState *m_deviceState;
-  std::string m_currentEffect;
+  //std::string m_currentEffect;
 
   /* Effects */
   uint8_t ef_hue = 0;
@@ -102,7 +93,6 @@ private:
     {"RandomPixels",   std::bind(&DeviceControl::efRandomPixels, this)},
     {"Fire",           std::bind(&DeviceControl::efFire, this)},
   };
-  uint8_t m_currentEffectIndex = 0;
 };
 
 #endif //ESP_LIGHT_DEVICE_CONTROL_H

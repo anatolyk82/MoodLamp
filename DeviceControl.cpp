@@ -3,8 +3,7 @@
 
 DeviceControl::DeviceControl() :
   m_deviceState(nullptr),
-  m_inTransition(false),
-  m_currentEffect("")
+  m_inTransition(false)
 {
 }
 
@@ -41,18 +40,14 @@ void DeviceControl::updateDeviceState()
     Serial.printf("DeviceControl: red:[%d], green:[%d], blue:[%d]\n", m_deviceState->red, m_deviceState->green, m_deviceState->blue);
     Serial.printf("DeviceControl: brightness:[%d]\n", m_deviceState->brightness);
 
-    if ((m_deviceState->effect != "") && (m_deviceState->effect != EFFECT_STOP)) {
-      //Serial.printf("DeviceControl: Effect:[%s]\n", m_deviceState->effect.toCharArray());
+    if ( (m_deviceState->effect != "") && (m_lightEffectsList.find(m_deviceState->effect) != m_lightEffectsList.end()) ) {
       FastLED.clear();
-      m_currentEffect = m_deviceState->effect;
     } else {
-      m_currentEffect = "";
       this->setColor(m_deviceState->red, m_deviceState->green, m_deviceState->blue, m_deviceState->brightness);
     }
   } else {
     Serial.println("DeviceControl: Switch the device off");
-    m_deviceState->effect != "";
-    m_currentEffect = "";
+    m_deviceState->effect = "";
     FastLED.clear();
   }
   FastLED.show();
@@ -86,7 +81,7 @@ void DeviceControl::run()
     this->transition();
   } else {
     if (m_lightEffectsList.find(m_deviceState->effect) != m_lightEffectsList.end()) {
-      m_lightEffectsList[ m_currentEffect ]();
+      m_lightEffectsList[ m_deviceState->effect ]();
     } else {
       m_deviceState->effect = "";
     }
