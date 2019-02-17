@@ -204,6 +204,6 @@ void DeviceMqttClient::sendSwitchStateCommand()
 
     Serial.printf("\nMQTT: Publish command: %s\n", buffer);
 
-    publish(MQTT_TOPIC_SET, 0, true, buffer);
+    publish(MQTT_TOPIC_SET, 0, false, buffer);
   }
 }
