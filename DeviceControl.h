@@ -1,6 +1,7 @@
 #ifndef ESP_LIGHT_DEVICE_CONTROL_H
 #define ESP_LIGHT_DEVICE_CONTROL_H
 
+#include <map>
 #include <FastLED.h>
 #include "Config.h"
 
@@ -84,18 +85,24 @@ private:
   
   CRGB leds[NUM_LEDS];
   struct DeviceState *m_deviceState;
-  String m_currentEffect;
+  std::string m_currentEffect;
 
   /* Effects */
   uint8_t ef_hue = 0;
-
-  //const uint8_t ef_fire_cooling = 15;
-  //const uint8_t ef_fire_sparking = 80;
   bool ef_gReverseDirection = false;
-
   bool ef_police_switch = true;
-
   ChaosEffectHelper chaosEffectHelper[NUM_LEDS];
+
+  std::map< std::string, std::function<void(void)> > m_lightEffectsList = {
+    {"Sparkles",       std::bind(&DeviceControl::efSparkles, this)},
+    {"Rainbow",        std::bind(&DeviceControl::efRainbow, this)},
+    {"Police",         std::bind(&DeviceControl::efPolice, this)},
+    {"Colorloop",      std::bind(&DeviceControl::efColorLoop, this)},
+    {"Chaos",          std::bind(&DeviceControl::efChaos, this)},
+    {"RandomPixels",   std::bind(&DeviceControl::efRandomPixels, this)},
+    {"Fire",           std::bind(&DeviceControl::efFire, this)},
+  };
+  uint8_t m_currentEffectIndex = 0;
 };
 
 #endif //ESP_LIGHT_DEVICE_CONTROL_H

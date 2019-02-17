@@ -97,7 +97,7 @@ void DeviceMqttClient::onMqttMessage(char* topic, char* payload, AsyncMqttClient
 
       if (json.containsKey("effect")) {
         const char* effect = json["effect"];
-        m_deviceState->effect = String(effect);
+        m_deviceState->effect = std::string(effect);
       } else {
         m_deviceState->effect = "";
       }
@@ -145,7 +145,7 @@ void DeviceMqttClient::publishDeviceState() {
   }
 
   if ( m_deviceState->effect != "" ) {
-    root["effect"] = m_deviceState->effect;
+    root["effect"] = m_deviceState->effect.c_str();
   }/* else {
     root["effect"] = ""; //TODO: Is this really needed to send an empty string ?
   }*/

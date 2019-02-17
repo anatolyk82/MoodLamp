@@ -1,6 +1,8 @@
 #ifndef ESP_LIGHT_CONFIG_H
 #define ESP_LIGHT_CONFIG_H
 
+#include <string>
+
 #define FIRMWARE_VERSION "0.2.0"
 
 #define INTERVAL_PUBLISH_STATE 600000 // Interval to send statistics to the mqtt broker
@@ -27,6 +29,7 @@
 #define NUM_LEDS_ONE_SIDE 22
 
 
+/* Button pin */
 #define BUTTON_PIN D0
 
 struct DeviceState {
@@ -39,7 +42,7 @@ struct DeviceState {
 
   int transition;
 
-  String effect;
+  std::string effect;
 
   uint8_t effect_fire_cooling = 15;
   uint8_t effect_fire_sparking = 80;

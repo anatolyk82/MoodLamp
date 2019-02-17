@@ -85,20 +85,10 @@ void DeviceControl::run()
   if ( m_inTransition ) {
     this->transition();
   } else {
-    if (m_currentEffect == EFFECT_SPARKLES) {
-      this->efSparkles();
-    } else if (m_currentEffect == EFFECT_RAINBOW) {
-      this->efRainbow();
-    } else if (m_currentEffect == EFFECT_POLICE) {
-      this->efPolice();
-    } else if (m_currentEffect == EFFECT_COLORLOOP) {
-      this->efColorLoop();
-    } else if (m_currentEffect == EFFECT_CHAOS) {
-      this->efChaos();
-    } else if (m_currentEffect == EFFECT_RANDOMPIXELS) {
-      this->efRandomPixels();
-    } else if (m_currentEffect == EFFECT_FIRE) {
-      this->efFire();
+    if (m_lightEffectsList.find(m_deviceState->effect) != m_lightEffectsList.end()) {
+      m_lightEffectsList[ m_currentEffect ]();
+    } else {
+      m_deviceState->effect = "";
     }
   }
 
