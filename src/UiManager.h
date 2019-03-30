@@ -5,10 +5,9 @@
 #include <ESP8266WiFi.h>          // https://github.com/esp8266/Arduino
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
-#include <WiFiManager.h>          // https://github.com/tzapu/WiFiManager
 #include <ArduinoJson.h>          // https://github.com/bblanchon/ArduinoJson (ver: 5.x)
 #include "Config.h"
-
+#include "WiFiManager.h"
 
 class UiManager {
 
@@ -16,14 +15,14 @@ public:
   UiManager();
   ~UiManager();
 
-  /* 
+  /*
    *  It's a blocking function to create a UI
    *  and let the user make all necessary settings.
    */
   void initUIManager(bool resetSettngs);
 
-  /* 
-   *  Getters of input parameters: 
+  /*
+   *  Getters of input parameters:
    *  They return input parameters from the UI.
    */
   char* mqttServer() { return m_mqtt_server; };
@@ -35,7 +34,7 @@ public:
 private:
   void readConfigurationFile();
   void writeConfigurationFile();
-  
+
   static void saveConfigCallback();
   static bool shouldSaveConfig;
 
