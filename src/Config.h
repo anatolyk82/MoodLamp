@@ -3,15 +3,15 @@
 
 #include <string>
 
-#define FIRMWARE_VERSION "0.2.0"
+#define FIRMWARE_VERSION "0.3.a" /* Firmware version */
 
-#define INTERVAL_PUBLISH_STATE 600000 // Interval to send statistics to the mqtt broker
+#define INTERVAL_PUBLISH_STATE 600000 /* Interval to send statistics to the mqtt broker */
 
 /* MQTT Settings */
-#define MQTT_TOPIC_STATE "light/moodlamp"
-#define MQTT_TOPIC_SET "light/moodlamp/set"
+#define MQTT_TOPIC_STATE "light/moodlamp"           /* state report MQTT topic */
+#define MQTT_TOPIC_SET "light/moodlamp/set"         /* command MQTT topic */
 
-#define MQTT_TOPIC_STATUS "light/moodlamp/status"
+#define MQTT_TOPIC_STATUS "light/moodlamp/status"   /* status MQTT topic: online/offline */
 #define MQTT_STATUS_PAYLOAD_ON "online"
 #define MQTT_STATUS_PAYLOAD_OFF "offline"
 
@@ -19,7 +19,7 @@
 
 
 /* WiFi Manager settings */
-#define WIFI_AP_NAME "MoodLamp"
+#define WIFI_AP_NAME "MoodLampX"
 #define WIFI_AP_PASS "123456789"
 
 
@@ -32,9 +32,10 @@
 /* Button pin */
 #define BUTTON_PIN D0
 
+/* The structure holds the current state of the device */
 struct DeviceState {
   bool state = false;
-  
+
   uint8_t red = 255;
   uint8_t green = 255;
   uint8_t blue = 255;

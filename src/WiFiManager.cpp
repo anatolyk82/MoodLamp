@@ -146,6 +146,7 @@ void WiFiManager::setupConfigPortal() {
   server->on(String(F("/")), std::bind(&WiFiManager::handleRoot, this));
   server->on(String(F("/wifi")), std::bind(&WiFiManager::handleWifi, this, true));
   server->on(String(F("/0wifi")), std::bind(&WiFiManager::handleWifi, this, false));
+  server->on(String(F("/mqtt")), std::bind(&WiFiManager::handleMqtt, this));
   server->on(String(F("/wifisave")), std::bind(&WiFiManager::handleWifiSave, this));
   server->on(String(F("/i")), std::bind(&WiFiManager::handleInfo, this));
   server->on(String(F("/r")), std::bind(&WiFiManager::handleReset, this));
@@ -405,12 +406,11 @@ void WiFiManager::handleRoot() {
   page.replace("{v}", "Options");
   page += FPSTR(HTTP_SCRIPT);
   page += FPSTR(HTTP_STYLE);
-  page += _customHeadElement;
+  page += _customHeadElement; //TODO: MAybe remove since I moved it to a separate page
   page += FPSTR(HTTP_HEAD_END);
   page += String(F("<h1>"));
-  page += _apName;
+  page += String(F("<div align=\"center\">")) + _apName + String(F("</div>"));
   page += String(F("</h1>"));
-  page += String(F("<h3>WiFiManager</h3>"));
   page += FPSTR(HTTP_PORTAL_OPTIONS);
   page += FPSTR(HTTP_END);
 
@@ -623,7 +623,7 @@ void WiFiManager::handleWifiSave() {
   page += FPSTR(HTTP_STYLE);
   page += _customHeadElement;
   page += FPSTR(HTTP_HEAD_END);
-  page += FPSTR(HTTP_SAVED);
+  page += FPSTR(HTTP_SAVED); //Change the description and redirect to the main page
   page += FPSTR(HTTP_END);
 
   server->sendHeader("Content-Length", String(page.length()));
@@ -632,6 +632,32 @@ void WiFiManager::handleWifiSave() {
   DEBUG_WM(F("Sent wifi save page"));
 
   connect = true; //signal ready to connect/reset
+}
+
+/** Handle MQTT options */
+void WiFiManager::handleMqtt() {
+  String page = FPSTR(HTTP_HEAD);
+  page += FPSTR(HTTP_SCRIPT);
+  page += FPSTR(HTTP_STYLE);
+  page += FPSTR(HTTP_HEAD_END);
+  //page += FPSTR(HTTP_MQTT); //TODO: Add input parameters here
+  page += FPSTR(HTTP_END);
+
+  server->sendHeader("Content-Length", String(page.length()));
+  server->send(200, "text/html", page);
+}
+
+/** Handle save MQTT options */
+void WiFiManager::handleMqttSave() {
+  String page = FPSTR(HTTP_HEAD);
+  page += FPSTR(HTTP_SCRIPT);
+  page += FPSTR(HTTP_STYLE);
+  page += FPSTR(HTTP_HEAD_END);
+  page += FPSTR(HTTP_MQTT_SAVED); //TODO: Fix this: format text
+  page += FPSTR(HTTP_END);
+
+  server->sendHeader("Content-Length", String(page.length()));
+  server->send(200, "text/html", page);
 }
 
 /** Handle the info page */
