@@ -44,12 +44,12 @@ void UiManager::saveConfigCallback () {
 void UiManager::initUIManager(bool _resetSettings) {
 
   /*if (!_resetSettings) {
-    
+
   }*/
   this->readConfigurationFile();
- 
+
   // The extra parameters to be configured
-  WiFiManagerParameter custom_text("<br/><p>MQTT Server</p>");
+  WiFiManagerParameter custom_text("<br/><b>MQTT Server</b>");
   WiFiManagerParameter custom_mqtt_server("mqtt_server", "MQTT server", m_mqtt_server, 40); //id, placeholder, default value, length
   WiFiManagerParameter custom_mqtt_port("mqtt_port", "MQTT port", m_mqtt_port, 5);
   WiFiManagerParameter custom_mqtt_login("mqtt_login", "MQTT login", m_mqtt_login, 64);
@@ -86,7 +86,7 @@ void UiManager::initUIManager(bool _resetSettings) {
 
   // Fetches ssid and pass and tries to connect
   // if it does not connect it starts an access point with the specified name
-  // and goes into a blocking loop awaiting configuration 
+  // and goes into a blocking loop awaiting configuration
   if (!wifiManager.autoConnect(WIFI_AP_NAME, WIFI_AP_PASS)) {
     Serial.println("Failed to connect to AP and hit timeout");
   }
@@ -114,7 +114,7 @@ void UiManager::initUIManager(bool _resetSettings) {
 void UiManager::readConfigurationFile() {
   // Read configuration from FS json
   Serial.print("Mounting FS ... ");
-  
+
   if (SPIFFS.begin()) {
     Serial.println("Ok");
     Serial.print("Check config file ... ");
