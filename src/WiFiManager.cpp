@@ -1,15 +1,3 @@
-/**************************************************************
-   WiFiManager is a library for the ESP8266/Arduino platform
-   (https://github.com/esp8266/Arduino) to enable easy
-   configuration and reconfiguration of WiFi credentials using a Captive Portal
-   inspired by:
-   http://www.esp8266.com/viewtopic.php?f=29&t=2520
-   https://github.com/chriscook8/esp-arduino-apboot
-   https://github.com/esp8266/Arduino/tree/master/libraries/DNSServer/examples/CaptivePortalAdvanced
-   Built by AlexT https://github.com/tzapu
-   Licensed under MIT license
- **************************************************************/
-
 #include "WiFiManager.h"
 
 WiFiManagerParameter::WiFiManagerParameter(const char *custom) {
@@ -122,12 +110,6 @@ void WiFiManager::setupConfigPortal() {
     DEBUG_WM(_apPassword);
   }
 
-  //optional soft ip config
-  if (_ap_static_ip) {
-    DEBUG_WM(F("Custom AP IP/GW/Subnet"));
-    WiFi.softAPConfig(_ap_static_ip, _ap_static_gw, _ap_static_sn);
-  }
-
   if (_apPassword != NULL) {
     WiFi.softAP(_apName, _apPassword);//password option
   } else {
@@ -144,10 +126,8 @@ void WiFiManager::setupConfigPortal() {
 
   /* Setup web pages: root, wifi config pages, SO captive portal detectors and not found. */
   server->on(String(F("/")), std::bind(&WiFiManager::handleRoot, this));
-  server->on(String(F("/wifi")), std::bind(&WiFiManager::handleWifi, this, true));
-  server->on(String(F("/0wifi")), std::bind(&WiFiManager::handleWifi, this, false));
-  server->on(String(F("/mqtt")), std::bind(&WiFiManager::handleMqtt, this));
-  server->on(String(F("/wifisave")), std::bind(&WiFiManager::handleWifiSave, this));
+  server->on(String(F("/conf")), std::bind(&WiFiManager::handleConf, this, true));
+  server->on(String(F("/confsave")), std::bind(&WiFiManager::handleConfSave, this));
   server->on(String(F("/i")), std::bind(&WiFiManager::handleInfo, this));
   server->on(String(F("/r")), std::bind(&WiFiManager::handleReset, this));
   //server->on("/generate_204", std::bind(&WiFiManager::handle204, this));  //Android/Chrome OS captive portal check.
@@ -212,7 +192,6 @@ boolean  WiFiManager::startConfigPortal(char const *apName, char const *apPasswo
     DEBUG_WM(F("SET AP STA"));
   }
 
-
   _apName = apName;
   _apPassword = apPassword;
 
@@ -224,7 +203,7 @@ boolean  WiFiManager::startConfigPortal(char const *apName, char const *apPasswo
   connect = false;
   setupConfigPortal();
 
-  while(1){
+  while(1) {
 
     // check if timeout
     if(configPortalHasTimeout()) break;
@@ -277,12 +256,6 @@ boolean  WiFiManager::startConfigPortal(char const *apName, char const *apPasswo
 int WiFiManager::connectWifi(String ssid, String pass) {
   DEBUG_WM(F("Connecting as wifi client..."));
 
-  // check if we've got static_ip settings, if we do, use those.
-  if (_sta_static_ip) {
-    DEBUG_WM(F("Custom STA IP/GW/Subnet"));
-    WiFi.config(_sta_static_ip, _sta_static_gw, _sta_static_sn);
-    DEBUG_WM(WiFi.localIP());
-  }
   //fix for auto connect racing issue
   if (WiFi.status() == WL_CONNECTED) {
     DEBUG_WM(F("Already connected. Bailing out."));
@@ -375,18 +348,6 @@ void WiFiManager::setDebugOutput(boolean debug) {
   _debug = debug;
 }
 
-void WiFiManager::setAPStaticIPConfig(IPAddress ip, IPAddress gw, IPAddress sn) {
-  _ap_static_ip = ip;
-  _ap_static_gw = gw;
-  _ap_static_sn = sn;
-}
-
-void WiFiManager::setSTAStaticIPConfig(IPAddress ip, IPAddress gw, IPAddress sn) {
-  _sta_static_ip = ip;
-  _sta_static_gw = gw;
-  _sta_static_sn = sn;
-}
-
 void WiFiManager::setMinimumSignalQuality(int quality) {
   _minimumQuality = quality;
 }
@@ -406,7 +367,7 @@ void WiFiManager::handleRoot() {
   page.replace("{v}", "Options");
   page += FPSTR(HTTP_SCRIPT);
   page += FPSTR(HTTP_STYLE);
-  page += _customHeadElement; //TODO: MAybe remove since I moved it to a separate page
+  page += _customHeadElement;
   page += FPSTR(HTTP_HEAD_END);
   page += String(F("<h1>"));
   page += String(F("<div align=\"center\">")) + _apName + String(F("</div>"));
@@ -420,10 +381,10 @@ void WiFiManager::handleRoot() {
 }
 
 /** Wifi config page handler */
-void WiFiManager::handleWifi(boolean scan) {
+void WiFiManager::handleConf(boolean scan) {
 
   String page = FPSTR(HTTP_HEAD);
-  page.replace("{v}", "Config ESP");
+  page.replace("{v}", "Device configuration");
   page += FPSTR(HTTP_SCRIPT);
   page += FPSTR(HTTP_STYLE);
   page += _customHeadElement;
@@ -453,11 +414,6 @@ void WiFiManager::handleWifi(boolean scan) {
           }
         }
       }
-
-      /*std::sort(indices, indices + n, [](const int & a, const int & b) -> bool
-        {
-        return WiFi.RSSI(a) > WiFi.RSSI(b);
-        });*/
 
       // remove duplicates ( must be RSSI sorted )
       if (_removeDuplicateAPs) {
@@ -505,6 +461,7 @@ void WiFiManager::handleWifi(boolean scan) {
   }
 
   page += FPSTR(HTTP_FORM_START);
+
   char parLength[5];
   // add the extra parameters to the form
   for (int i = 0; i < _paramsCount; i++) {
@@ -531,38 +488,6 @@ void WiFiManager::handleWifi(boolean scan) {
     page += "<br/>";
   }
 
-  if (_sta_static_ip) {
-
-    String item = FPSTR(HTTP_FORM_PARAM);
-    item.replace("{i}", "ip");
-    item.replace("{n}", "ip");
-    item.replace("{p}", "Static IP");
-    item.replace("{l}", "15");
-    item.replace("{v}", _sta_static_ip.toString());
-
-    page += item;
-
-    item = FPSTR(HTTP_FORM_PARAM);
-    item.replace("{i}", "gw");
-    item.replace("{n}", "gw");
-    item.replace("{p}", "Static Gateway");
-    item.replace("{l}", "15");
-    item.replace("{v}", _sta_static_gw.toString());
-
-    page += item;
-
-    item = FPSTR(HTTP_FORM_PARAM);
-    item.replace("{i}", "sn");
-    item.replace("{n}", "sn");
-    item.replace("{p}", "Subnet");
-    item.replace("{l}", "15");
-    item.replace("{v}", _sta_static_sn.toString());
-
-    page += item;
-
-    page += "<br/>";
-  }
-
   page += FPSTR(HTTP_FORM_END);
   page += FPSTR(HTTP_SCAN_LINK);
 
@@ -571,12 +496,11 @@ void WiFiManager::handleWifi(boolean scan) {
   server->sendHeader("Content-Length", String(page.length()));
   server->send(200, "text/html", page);
 
-
   DEBUG_WM(F("Sent config page"));
 }
 
 /** Handle the WLAN save form and redirect to WLAN config page again */
-void WiFiManager::handleWifiSave() {
+void WiFiManager::handleConfSave() {
   DEBUG_WM(F("WiFi save"));
 
   //SAVE/connect here
@@ -597,26 +521,6 @@ void WiFiManager::handleWifiSave() {
     DEBUG_WM(value);
   }
 
-  if (server->arg("ip") != "") {
-    DEBUG_WM(F("static ip"));
-    DEBUG_WM(server->arg("ip"));
-    //_sta_static_ip.fromString(server->arg("ip"));
-    String ip = server->arg("ip");
-    optionalIPFromString(&_sta_static_ip, ip.c_str());
-  }
-  if (server->arg("gw") != "") {
-    DEBUG_WM(F("static gateway"));
-    DEBUG_WM(server->arg("gw"));
-    String gw = server->arg("gw");
-    optionalIPFromString(&_sta_static_gw, gw.c_str());
-  }
-  if (server->arg("sn") != "") {
-    DEBUG_WM(F("static netmask"));
-    DEBUG_WM(server->arg("sn"));
-    String sn = server->arg("sn");
-    optionalIPFromString(&_sta_static_sn, sn.c_str());
-  }
-
   String page = FPSTR(HTTP_HEAD);
   page.replace("{v}", "Credentials Saved");
   page += FPSTR(HTTP_SCRIPT);
@@ -632,32 +536,6 @@ void WiFiManager::handleWifiSave() {
   DEBUG_WM(F("Sent wifi save page"));
 
   connect = true; //signal ready to connect/reset
-}
-
-/** Handle MQTT options */
-void WiFiManager::handleMqtt() {
-  String page = FPSTR(HTTP_HEAD);
-  page += FPSTR(HTTP_SCRIPT);
-  page += FPSTR(HTTP_STYLE);
-  page += FPSTR(HTTP_HEAD_END);
-  //page += FPSTR(HTTP_MQTT); //TODO: Add input parameters here
-  page += FPSTR(HTTP_END);
-
-  server->sendHeader("Content-Length", String(page.length()));
-  server->send(200, "text/html", page);
-}
-
-/** Handle save MQTT options */
-void WiFiManager::handleMqttSave() {
-  String page = FPSTR(HTTP_HEAD);
-  page += FPSTR(HTTP_SCRIPT);
-  page += FPSTR(HTTP_STYLE);
-  page += FPSTR(HTTP_HEAD_END);
-  page += FPSTR(HTTP_MQTT_SAVED); //TODO: Fix this: format text
-  page += FPSTR(HTTP_END);
-
-  server->sendHeader("Content-Length", String(page.length()));
-  server->send(200, "text/html", page);
 }
 
 /** Handle the info page */
@@ -723,6 +601,7 @@ void WiFiManager::handleReset() {
   delay(2000);
 }
 
+/** Handle the 404 page */
 void WiFiManager::handleNotFound() {
   if (captivePortal()) { // If captive portal redirect instead of displaying the error page.
     return;
@@ -747,7 +626,9 @@ void WiFiManager::handleNotFound() {
 }
 
 
-/** Redirect to captive portal if we got a request for another domain. Return true in that case so the page handler do not try to handle the request again. */
+/** Redirect to captive portal if we got a request for another domain.
+  * Return true in that case so the page handler do not try to handle the request again.
+  */
 boolean WiFiManager::captivePortal() {
   if (!isIp(server->hostHeader()) ) {
     DEBUG_WM(F("Request redirected to captive portal"));

@@ -26,14 +26,18 @@ const char HTTP_HEAD[] PROGMEM            = "<!DOCTYPE html><html lang=\"en\"><h
 const char HTTP_STYLE[] PROGMEM           = "<style>.c{text-align: center;} div,input{padding:5px;font-size:1em;} input{width:95%;} body{text-align: center;font-family:verdana;} button{border:0;border-radius:0.3rem;background-color:#1fa3ec;color:#fff;line-height:2.4rem;font-size:1.2rem;width:100%;} .q{float: right;width: 64px;text-align: right;} .l{background: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAALVBMVEX///8EBwfBwsLw8PAzNjaCg4NTVVUjJiZDRUUUFxdiZGSho6OSk5Pg4eFydHTCjaf3AAAAZElEQVQ4je2NSw7AIAhEBamKn97/uMXEGBvozkWb9C2Zx4xzWykBhFAeYp9gkLyZE0zIMno9n4g19hmdY39scwqVkOXaxph0ZCXQcqxSpgQpONa59wkRDOL93eAXvimwlbPbwwVAegLS1HGfZAAAAABJRU5ErkJggg==\") no-repeat left center;background-size: 1em;}</style>";
 const char HTTP_SCRIPT[] PROGMEM          = "<script>function c(l){document.getElementById('s').value=l.innerText||l.textContent;document.getElementById('p').focus();}</script>";
 const char HTTP_HEAD_END[] PROGMEM        = "</head><body><div style='text-align:left;display:inline-block;min-width:260px;'>";
-const char HTTP_PORTAL_OPTIONS[] PROGMEM  = "<form action=\"/wifi\" method=\"get\"><button>Configure WiFi</button></form><br/><form action=\"/0wifi\" method=\"get\"><button>Configure WiFi (No Scan)</button></form><br/><form action=\"/mqtt\" method=\"get\"><button>Configure MQTT</button></form><br/><form action=\"/i\" method=\"get\"><button>Info</button></form><br/><form action=\"/r\" method=\"post\"><button>Reset</button></form>";
+const char HTTP_PORTAL_OPTIONS[] PROGMEM  = "<form action=\"/conf\" method=\"get\"><button>Configuration</button></form><br/><form action=\"/i\" method=\"get\"><button>Info</button></form><br/><form action=\"/r\" method=\"post\"><button>Reset</button></form>";
 const char HTTP_ITEM[] PROGMEM            = "<div><a href='#p' onclick='c(this)'>{v}</a>&nbsp;<span class='q {i}'>{r}%</span></div>";
-const char HTTP_FORM_START[] PROGMEM      = "<form method='get' action='wifisave'><input id='s' name='s' length=32 placeholder='SSID'><br/><input id='p' name='p' length=64 type='password' placeholder='password'><br/>";
+const char HTTP_FORM_START[] PROGMEM      = "<br/><b>WiFi connection</b><br/><form method='get' action='confsave'><input id='s' name='s' length=32 placeholder='SSID'><br/><input id='p' name='p' length=64 type='password' placeholder='Password'><br/>";
 const char HTTP_FORM_PARAM[] PROGMEM      = "<br/><input id='{i}' name='{n}' maxlength={l} placeholder='{p}' value='{v}' {c}>";
-const char HTTP_FORM_END[] PROGMEM        = "<br/><button type='submit'>save</button></form>";
-const char HTTP_SCAN_LINK[] PROGMEM       = "<br/><form action=\"/wifi\" method=\"get\"><button>Scan</button></form>"; //"<br/><div class=\"c\"><a href=\"/wifi\">Scan</a></div>";
+const char HTTP_FORM_MQTT[] PROGMEM       = "<br/><b>MQTT configuration</b><br/><input id='mqtt_server' name='mqtt_server' maxlength=40 placeholder='Server' value='{mqtt_server}'>"
+                                            "<br/><input id='mqtt_port' name='mqtt_port' maxlength=5 placeholder='Port' value='{mqtt_port}'>"
+                                            "<br/><input id='mqtt_login' name='mqtt_login' maxlength=64 placeholder='Login' value='{mqtt_login}'>"
+                                            "<br/><input id='mqtt_password' name='mqtt_password' maxlength=64 placeholder='Password' value='{mqtt_password}'>"
+                                            "<br/><input id='mqtt_client_id' name='mqtt_client_id' maxlength=64 placeholder='Client ID' value='{mqtt_client_id}'><br/>";
+const char HTTP_FORM_END[] PROGMEM        = "<br/><button type='submit'>Save</button></form>";
+const char HTTP_SCAN_LINK[] PROGMEM       = "<br/><form action=\"/conf\" method=\"get\"><button>Scan</button></form>"; //"<br/><div class=\"c\"><a href=\"/wifi\">Scan</a></div>";
 const char HTTP_SAVED[] PROGMEM           = "<div>Credentials Saved<br />Trying to connect ESP to network.<br />If it fails reconnect to AP to try again</div>";
-const char HTTP_MQTT_SAVED[] PROGMEM      = "<div>Credentials Saved<br />The device will try to connect to the MQTT server<br />If it fails reconnect to AP to try again</div>";
 const char HTTP_END[] PROGMEM             = "</div></body></html>";
 
 #ifndef WIFI_MANAGER_MAX_PARAMS
@@ -100,10 +104,6 @@ class WiFiManager
     void          setDebugOutput(boolean debug);
     //defaults to not showing anything under 8% signal quality if called
     void          setMinimumSignalQuality(int quality = 8);
-    //sets a custom ip /gateway /subnet configuration
-    void          setAPStaticIPConfig(IPAddress ip, IPAddress gw, IPAddress sn);
-    //sets config for a static IP
-    void          setSTAStaticIPConfig(IPAddress ip, IPAddress gw, IPAddress sn);
     //called when AP mode and config portal is started
     void          setAPCallback( void (*func)(WiFiManager*) );
     //called when settings have been changed and connection was successful
@@ -139,13 +139,6 @@ class WiFiManager
     unsigned long _connectTimeout         = 0;
     unsigned long _configPortalStart      = 0;
 
-    IPAddress     _ap_static_ip;
-    IPAddress     _ap_static_gw;
-    IPAddress     _ap_static_sn;
-    IPAddress     _sta_static_ip;
-    IPAddress     _sta_static_gw;
-    IPAddress     _sta_static_sn;
-
     int           _paramsCount            = 0;
     int           _minimumQuality         = -1;
     boolean       _removeDuplicateAPs     = true;
@@ -154,18 +147,13 @@ class WiFiManager
 
     const char*   _customHeadElement      = "";
 
-    //String        getEEPROMString(int start, int len);
-    //void          setEEPROMString(int start, int len, String string);
-
     int           status = WL_IDLE_STATUS;
     int           connectWifi(String ssid, String pass);
     uint8_t       waitForConnectResult();
 
     void          handleRoot();
-    void          handleWifi(boolean scan);
-    void          handleWifiSave();
-    void          handleMqtt();
-    void          handleMqttSave();
+    void          handleConf(boolean scan);
+    void          handleConfSave();
     void          handleInfo();
     void          handleReset();
     void          handleNotFound();
@@ -176,7 +164,7 @@ class WiFiManager
     // DNS server
     const byte    DNS_PORT = 53;
 
-    //helpers
+    // Helpers
     int           getRSSIasQuality(int RSSI);
     boolean       isIp(String str);
     String        toStringIp(IPAddress ip);
