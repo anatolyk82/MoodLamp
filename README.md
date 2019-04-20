@@ -1,6 +1,7 @@
 # MoodLamp
 
 ![Lamp](doc/lamp.jpg)
+
 The lamp is controlled via mqtt protocol. It has 88 WS2811 LEDs located on a square aluminium profile on every side with 22 LEDs ona side. The LEDs are controlled by ESP8266 (Wemos D1 mini board) All device settings (the lamp) as well as mqtt topics can be configured in `Config.h`.
 
 ### Home Assistant configuration
