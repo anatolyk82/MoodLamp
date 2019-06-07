@@ -16,8 +16,11 @@ struct ChaosEffectHelper {
   bool up;
 };
 
+#define qsubd(x, b) ((x>b) ? b : 0)
+#define qsuba(x, b) ((x>b) ? x-b : 0)
+
 /*
- * This class may differ from one device to another 
+ * This class may differ from one device to another
  * depending on how the device is controled.
  */
 class DeviceControl
@@ -26,9 +29,9 @@ public:
   DeviceControl();
   ~DeviceControl();
 
-  /* 
-   * Initialize the device. 
-   * The function must be called once in setup() 
+  /*
+   * Initialize the device.
+   * The function must be called once in setup()
    */
   void initDevice();
 
@@ -41,7 +44,7 @@ public:
   }
 
   /*
-   * The function applies all changes from 
+   * The function applies all changes from
    * from the device state structure
    */
   void updateDeviceState();
@@ -52,7 +55,7 @@ public:
    */
   void nextEffect();
 
-  /* 
+  /*
    * Run the device.
    * It must be called in loop()
    */
@@ -66,6 +69,7 @@ public:
   void efChaos();
   void efRandomPixels();
   void efFire();
+  void efPlasmaLamp();
 
 private:
   void transition();
@@ -73,7 +77,7 @@ private:
   bool m_inTransition;
 
   void setColor(byte red, byte green, byte blue, byte brightness);
-  
+
   CRGB leds[NUM_LEDS];
   struct DeviceState *m_deviceState;
 
@@ -83,6 +87,9 @@ private:
   bool ef_police_switch = true;
   ChaosEffectHelper chaosEffectHelper[NUM_LEDS];
 
+  CRGBPalette16 ef_PlasmaCurrentPalette;
+  CRGBPalette16 ef_PlasmaTargetPalette;
+
   std::map< std::string, std::function<void(void)> > m_lightEffectsList = {
     {"Sparkles",       std::bind(&DeviceControl::efSparkles, this)},
     {"Rainbow",        std::bind(&DeviceControl::efRainbow, this)},
@@ -91,6 +98,7 @@ private:
     {"Chaos",          std::bind(&DeviceControl::efChaos, this)},
     {"RandomPixels",   std::bind(&DeviceControl::efRandomPixels, this)},
     {"Fire",           std::bind(&DeviceControl::efFire, this)},
+    {"PlasmaLamp",     std::bind(&DeviceControl::efPlasmaLamp, this)},
     {"NextEffect",     std::bind(&DeviceControl::nextEffect, this)}
   };
   std::string m_lastActiveEffect;

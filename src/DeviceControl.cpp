@@ -249,3 +249,30 @@ void DeviceControl::efFire()
 
     FastLED.delay(50);
 }
+
+// This effect is based on: https://github.com/atuline/FastLED-Demos/tree/master/plasma
+void DeviceControl::efPlasmaLamp()
+{
+  EVERY_N_MILLISECONDS(50) {
+    int thisPhase = beatsin8(6,-64,64);
+    int thatPhase = beatsin8(7,-64,64);
+
+    for (int k=0; k<NUM_LEDS_ONE_SIDE; k++) {
+      int colorIndex = cubicwave8((k*23)+thisPhase)/2 + cos8((k*15)+thatPhase)/2;
+      int thisBright = qsuba(colorIndex, beatsin8(7,0,96));
+      for (int s = 0; s < NUM_LED_SIDES; s++) {
+        leds[k + s*NUM_LEDS_ONE_SIDE] = ColorFromPalette(ef_PlasmaCurrentPalette, colorIndex, thisBright, LINEARBLEND);
+      }
+    }
+  }
+
+  EVERY_N_MILLISECONDS(100) {
+    uint8_t maxChanges = 24;
+    nblendPaletteTowardPalette(ef_PlasmaCurrentPalette, ef_PlasmaTargetPalette, maxChanges);
+  }
+
+  EVERY_N_SECONDS(5) {
+    uint8_t baseC = random8();
+    ef_PlasmaTargetPalette = CRGBPalette16(CHSV(baseC+random8(32), 192, random8(128,255)), CHSV(baseC+random8(32), 255, random8(128,255)), CHSV(baseC+random8(32), 192, random8(128,255)), CHSV(baseC+random8(32), 255, random8(128,255)));
+  }
+}

@@ -3,7 +3,7 @@
 
 #include <string>
 
-#define FIRMWARE_VERSION "0.3.a" /* Firmware version */
+#define FIRMWARE_VERSION "0.3.0b" /* Firmware version */
 
 #define INTERVAL_PUBLISH_STATE 600000 /* Interval to send statistics to the mqtt broker */
 
@@ -27,6 +27,7 @@
 #define DATA_PIN    D1
 #define NUM_LEDS    88
 #define NUM_LEDS_ONE_SIDE 22
+#define NUM_LED_SIDES 4
 
 
 /* Button pin */
