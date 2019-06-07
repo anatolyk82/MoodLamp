@@ -19,7 +19,7 @@
 
 
 /* WiFi Manager settings */
-#define WIFI_AP_NAME "MoodLampX"
+#define WIFI_AP_NAME "MoodLamp"
 #define WIFI_AP_PASS "123456789"
 
 
