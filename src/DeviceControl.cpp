@@ -33,7 +33,7 @@ void DeviceControl::updateDeviceState()
   if (m_deviceState->transition != 0) {
     m_current_brightness = m_deviceState->state ? 0 : m_deviceState->brightness;
     m_inTransition = true;
-    return; 
+    return;
   }
 
   if (m_deviceState->state) {
@@ -186,8 +186,8 @@ void DeviceControl::efChaos()
 void DeviceControl::efRandomPixels()
 {
   static int countToCreateNewPixel = 0;
-  static byte nToCreateNewPixel = 50;
-  
+  static byte nToCreateNewPixel = 30;
+
   for (byte j=0; j<NUM_LEDS; j++) {
     leds[j].fadeToBlackBy(1);
   }
@@ -198,7 +198,7 @@ void DeviceControl::efRandomPixels()
       i = random(NUM_LEDS);
     } while ( (((uint32_t)leds[i].red << 16) | ((long)leds[i].green << 8 ) | (long)leds[i].blue) != 0 );
     leds[i] = CHSV( random(255), 255, random(70,255));
-    nToCreateNewPixel = random(10,70); // make the interval between two dots different 
+    nToCreateNewPixel = random(10,70); // make the interval between two dots different
   }
 
   countToCreateNewPixel = (countToCreateNewPixel + 1) % nToCreateNewPixel;
@@ -218,12 +218,12 @@ void DeviceControl::efFire()
   for( int i = 0; i < NUM_LEDS_ONE_SIDE; i++) {
     heat[i] = qsub8( heat[i],  (random8(0, ((m_deviceState->effect_fire_cooling * 10) / NUM_LEDS_ONE_SIDE) + 2) +i*15) );
   }
-  
+
     // Step 2.  Heat from each cell drifts 'up' and diffuses a little
     for( int k= NUM_LEDS_ONE_SIDE - 1; k >= 2; k--) {
       heat[k] = (heat[k - 1] + heat[k - 2] + heat[k - 2] ) / 3;
     }
-    
+
     // Step 3.  Randomly ignite new 'sparks' of heat near the bottom
     if( random8() < m_deviceState->effect_fire_sparking ) {
       int y = random8(3);
@@ -246,8 +246,6 @@ void DeviceControl::efFire()
         leds[pixelnumber + l*NUM_LEDS_ONE_SIDE] = color;
       }
     }
-  
+
     FastLED.delay(50);
 }
-
-  
