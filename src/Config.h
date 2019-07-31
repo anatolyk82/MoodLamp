@@ -3,7 +3,7 @@
 
 #include <string>
 
-#define FIRMWARE_VERSION "0.3.0b" /* Firmware version */
+#define FIRMWARE_VERSION "0.3.0" /* Firmware version */
 
 #define INTERVAL_PUBLISH_STATE 600000 /* Interval to send statistics to the mqtt broker */
 

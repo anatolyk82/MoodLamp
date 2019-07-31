@@ -85,6 +85,7 @@ private:
   uint8_t ef_hue = 0;
   bool ef_gReverseDirection = false;
   bool ef_police_switch = true;
+  uint8_t ef_police_stage = 0;
   ChaosEffectHelper chaosEffectHelper[NUM_LEDS];
 
   CRGBPalette16 ef_PlasmaCurrentPalette;

@@ -143,15 +143,29 @@ void DeviceControl::efRainbow()
 
 void DeviceControl::efPolice()
 {
-  for (uint8_t l=0; l < 4; l++) {
-    if ( l%2 ) {
-      fill_solid( leds + l*NUM_LEDS_ONE_SIDE, NUM_LEDS_ONE_SIDE, CRGB((ef_police_switch ? 255 : 0), 0, (ef_police_switch ? 0 : 255)) );
-    } else {
-      fill_solid( leds + l*NUM_LEDS_ONE_SIDE, NUM_LEDS_ONE_SIDE, CRGB((ef_police_switch ? 0 : 255), 0, (ef_police_switch ? 255 : 0)) );
-    }
+  CRGB color = ef_police_switch ? CRGB(255, 0, 0) : CRGB(0, 0, 255);
+  uint8_t shift1 = ef_police_switch ? 0 : 1;
+  uint8_t shift2 = ef_police_switch ? 2 : 3;
+
+  fill_solid( leds, NUM_LEDS, CRGB(0, 0, 0) );
+  if (ef_police_stage == 0) {
+    fill_solid( leds + shift1*NUM_LEDS_ONE_SIDE, NUM_LEDS_ONE_SIDE, color );
+    fill_solid( leds + shift2*NUM_LEDS_ONE_SIDE, NUM_LEDS_ONE_SIDE, color );
+    FastLED.delay(30);
+  } else if (ef_police_stage == 1) {
+    FastLED.delay(30);
+  } else if (ef_police_stage == 2) {
+    fill_solid( leds + shift1*NUM_LEDS_ONE_SIDE, NUM_LEDS_ONE_SIDE, color );
+    fill_solid( leds + shift2*NUM_LEDS_ONE_SIDE, NUM_LEDS_ONE_SIDE, color );
+    FastLED.delay(100);
+  } else {
+    FastLED.delay(400);
   }
-  ef_police_switch = !ef_police_switch;
-  FastLED.delay(400);
+
+  ef_police_stage = ef_police_stage == 3 ? 0 : ef_police_stage + 1;
+  if (!ef_police_stage) {
+    ef_police_switch = !ef_police_switch;
+  }
 }
 
 void DeviceControl::efColorLoop()
