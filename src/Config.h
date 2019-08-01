@@ -3,7 +3,7 @@
 
 #include <string>
 
-#define FIRMWARE_VERSION "0.3.0" /* Firmware version */
+#define FIRMWARE_VERSION "0.3.1" /* Firmware version */
 
 #define INTERVAL_PUBLISH_STATE 600000 /* Interval to send statistics to the mqtt broker */
 
@@ -40,7 +40,7 @@ struct DeviceState {
   uint8_t red = 255;
   uint8_t green = 255;
   uint8_t blue = 255;
-  uint8_t brightness = 32;
+  uint8_t brightness = 128;
 
   int transition;
 

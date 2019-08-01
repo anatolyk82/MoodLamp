@@ -65,6 +65,7 @@ public:
   void efSparkles();
   void efRainbow();
   void efPolice();
+  void efAlarm();
   void efColorLoop();
   void efChaos();
   void efRandomPixels();
@@ -87,6 +88,8 @@ private:
   bool ef_police_switch = true;
   uint8_t ef_police_stage = 0;
   ChaosEffectHelper chaosEffectHelper[NUM_LEDS];
+  int8_t ef_alarmDelta = 5;
+  uint8_t ef_alarmValue = 0;
 
   CRGBPalette16 ef_PlasmaCurrentPalette;
   CRGBPalette16 ef_PlasmaTargetPalette;
@@ -95,6 +98,7 @@ private:
     {"Sparkles",       std::bind(&DeviceControl::efSparkles, this)},
     {"Rainbow",        std::bind(&DeviceControl::efRainbow, this)},
     {"Police",         std::bind(&DeviceControl::efPolice, this)},
+    {"Alarm",          std::bind(&DeviceControl::efAlarm, this)},
     {"Colorloop",      std::bind(&DeviceControl::efColorLoop, this)},
     {"Chaos",          std::bind(&DeviceControl::efChaos, this)},
     {"RandomPixels",   std::bind(&DeviceControl::efRandomPixels, this)},

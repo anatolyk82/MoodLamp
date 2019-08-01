@@ -168,6 +168,30 @@ void DeviceControl::efPolice()
   }
 }
 
+
+void DeviceControl::efAlarm()
+{
+  CHSV clr1 = CHSV(0, 255, ef_alarmValue);
+  CHSV clr2 = CHSV(160, 255, 255 - ef_alarmValue);
+
+  fill_solid( leds, NUM_LEDS_ONE_SIDE, clr1 );
+  fill_solid( leds + 2*NUM_LEDS_ONE_SIDE, NUM_LEDS_ONE_SIDE, clr1 );
+
+  fill_solid( leds + 1*NUM_LEDS_ONE_SIDE, NUM_LEDS_ONE_SIDE, clr2 );
+  fill_solid( leds + 3*NUM_LEDS_ONE_SIDE, NUM_LEDS_ONE_SIDE, clr2 );
+
+  ef_alarmValue = ef_alarmValue + ef_alarmDelta;
+
+  if (ef_alarmValue == 0) {
+    ef_alarmDelta = 5;
+  } else if (ef_alarmValue == 255) {
+    ef_alarmDelta = -5;
+  }
+
+  FastLED.delay(10);
+}
+
+
 void DeviceControl::efColorLoop()
 {
   fill_solid( leds, NUM_LEDS, CHSV( ef_hue, 255, m_deviceState->brightness) );
