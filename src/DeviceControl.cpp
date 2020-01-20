@@ -2,8 +2,8 @@
 #include "Config.h"
 
 DeviceControl::DeviceControl() :
-  m_deviceState(nullptr),
-  m_inTransition(false)
+  m_inTransition(false),
+  m_deviceState(nullptr)
 {
 }
 

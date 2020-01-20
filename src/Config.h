@@ -3,7 +3,7 @@
 
 #include <string>
 
-#define FIRMWARE_VERSION "0.3.1" /* Firmware version */
+#define FIRMWARE_VERSION "0.3.2" /* Firmware version */
 
 #define INTERVAL_PUBLISH_STATE 600000 /* Interval to send statistics to the mqtt broker */
 
@@ -17,11 +17,12 @@
 
 #define MQTT_KEEP_ALIVE_SECONDS 30
 
+//Uncomment to enable button control
+//#define LAMP_CONTROL_BUTTON_ENABLED 1
 
 /* WiFi Manager settings */
 #define WIFI_AP_NAME "MoodLamp"
 #define WIFI_AP_PASS "123456789"
-
 
 /* Device settings */
 #define DATA_PIN    D1

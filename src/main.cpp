@@ -1,4 +1,4 @@
-  
+
 #include <SimpleTimer.h>          // https://github.com/schinken/SimpleTimer
 
 #include "Config.h"
@@ -22,15 +22,17 @@ DeviceControl device;
 /* Timer to publish the current state */
 SimpleTimer timer;
 
+#ifdef LAMP_CONTROL_BUTTON_ENABLED
 /* Light control button */
 LightControlButton button;
+#endif
 
 void publishDeviceStateTimer() {
   mqttClient.publishDeviceState();
 }
 
 void setup() {
- 
+
   /* Init serial port */
   Serial.begin(115200);
   Serial.println();
@@ -77,7 +79,7 @@ void setup() {
     attemptToConnectToMQTT += 1;
   }
 
-  /* If there is still no connection here, restart the device */  
+  /* If there is still no connection here, restart the device */
   if (!WiFi.isConnected()) {
     Serial.println("setup(): WiFi is not connected. Reset the device to initiate connection again.");
     ESP.restart();
@@ -88,11 +90,13 @@ void setup() {
     ESP.restart();
   }
 
+#ifdef LAMP_CONTROL_BUTTON_ENABLED
   /* Initialize the button */
   button.init(BUTTON_PIN);
   button.onClicked( std::bind(&DeviceMqttClient::sendSwitchStateCommand, &mqttClient) );
   button.onDoubleClicked( std::bind(&DeviceMqttClient::sendSwitchEffectCommand, &mqttClient) );
   button.onPressAndHold( std::bind(&DeviceMqttClient::sendChangeBrightnessCommand, &mqttClient) );
+#endif
 
   /* Publish device state periodicly */
   timer.setInterval(INTERVAL_PUBLISH_STATE, publishDeviceStateTimer);
@@ -102,7 +106,10 @@ void setup() {
 void loop() {
   timer.run();
   device.run();
+
+#ifdef LAMP_CONTROL_BUTTON_ENABLED
   button.run();
+#endif
 
   if (WiFi.status() != WL_CONNECTED) {
     Serial.println("loop(): WiFi is not connected. Reset the device to initiate connection again.");

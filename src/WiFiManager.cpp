@@ -363,7 +363,7 @@ void WiFiManager::handleRoot() {
     return;
   }
 
-  String page = FPSTR(HTTP_HEAD);
+  String page = FPSTR(HTTP_HEAD_HTML);
   page.replace("{v}", "Options");
   page += FPSTR(HTTP_SCRIPT);
   page += FPSTR(HTTP_STYLE);
@@ -383,7 +383,7 @@ void WiFiManager::handleRoot() {
 /** Wifi config page handler */
 void WiFiManager::handleConf(boolean scan) {
 
-  String page = FPSTR(HTTP_HEAD);
+  String page = FPSTR(HTTP_HEAD_HTML);
   page.replace("{v}", "Device configuration");
   page += FPSTR(HTTP_SCRIPT);
   page += FPSTR(HTTP_STYLE);
@@ -521,7 +521,7 @@ void WiFiManager::handleConfSave() {
     DEBUG_WM(value);
   }
 
-  String page = FPSTR(HTTP_HEAD);
+  String page = FPSTR(HTTP_HEAD_HTML);
   page.replace("{v}", "Credentials Saved");
   page += FPSTR(HTTP_SCRIPT);
   page += FPSTR(HTTP_STYLE);
@@ -542,7 +542,7 @@ void WiFiManager::handleConfSave() {
 void WiFiManager::handleInfo() {
   DEBUG_WM(F("Info"));
 
-  String page = FPSTR(HTTP_HEAD);
+  String page = FPSTR(HTTP_HEAD_HTML);
   page.replace("{v}", "Info");
   page += FPSTR(HTTP_SCRIPT);
   page += FPSTR(HTTP_STYLE);
@@ -583,7 +583,7 @@ void WiFiManager::handleInfo() {
 void WiFiManager::handleReset() {
   DEBUG_WM(F("Reset"));
 
-  String page = FPSTR(HTTP_HEAD);
+  String page = FPSTR(HTTP_HEAD_HTML);
   page.replace("{v}", "Info");
   page += FPSTR(HTTP_SCRIPT);
   page += FPSTR(HTTP_STYLE);

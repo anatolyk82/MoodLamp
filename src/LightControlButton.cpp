@@ -63,7 +63,7 @@ void LightControlButton::run()
     m_ready = false;
     m_resetCount = true;
 
-    Serial.printf("LightControlButton: Click duration: %d; Event count: %d\n", m_eventLength, m_eventCount);
+    Serial.printf("LightControlButton: Click duration: %lu; Event count: %d\n", m_eventLength, m_eventCount);
 
     if (m_eventCount == 1) {
       if ((m_eventLength > 150) && m_onClickEvent) {
